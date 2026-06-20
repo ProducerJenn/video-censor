@@ -11,7 +11,8 @@ from moviepy.audio.AudioClip import AudioArrayClip
 CACHE_DIR = os.path.expanduser("~/.cache/censor-app")
 os.makedirs(CACHE_DIR, exist_ok=True)
 
-BADWORDS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "badwords.txt")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+BADWORDS_FILE = os.path.join(SCRIPT_DIR, "badwords.txt")
 
 def load_badwords():
     words = []
