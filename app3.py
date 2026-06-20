@@ -11,11 +11,6 @@ from moviepy.audio.AudioClip import AudioArrayClip
 CACHE_DIR = os.path.expanduser("~/.cache/censor-app")
 os.makedirs(CACHE_DIR, exist_ok=True)
 
-for f in os.listdir(CACHE_DIR):
-    p = os.path.join(CACHE_DIR, f)
-    if os.path.isfile(p):
-        os.remove(p)
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 BADWORDS_FILE = os.path.join(SCRIPT_DIR, "badwords.txt")
 
@@ -211,6 +206,11 @@ if uploaded_file is not None:
     file_sig = f"{uploaded_file.name}:{uploaded_file.size}"
     if st.session_state.get('_last_file_sig') != file_sig:
         cached_path = os.path.join(CACHE_DIR, "uploaded_source.mp4")
+        # Clear stale cache files before writing new video
+        for old in os.listdir(CACHE_DIR):
+            p = os.path.join(CACHE_DIR, old)
+            if os.path.isfile(p):
+                os.remove(p)
         with open(cached_path, "wb") as f:
             f.write(uploaded_file.getvalue())
         st.session_state['temp_video_path'] = cached_path
