@@ -169,6 +169,8 @@ if 'preview_audio_bytes' not in st.session_state:
     st.session_state['preview_audio_bytes'] = None
 if 'preview_ready' not in st.session_state:
     st.session_state['preview_ready'] = False
+if '_last_file_sig' not in st.session_state:
+    st.session_state['_last_file_sig'] = None
 
 # Sidebar Configurations
 st.sidebar.header("🔧 Initial Auto-Censor Settings")
@@ -188,12 +190,18 @@ bleep_padding = st.sidebar.slider(
 uploaded_file = st.file_uploader("Choose an MP4 Video File", type=["mp4"])
 
 if uploaded_file is not None:
-    cached_path = os.path.join(CACHE_DIR, "uploaded_source.mp4")
-    if st.session_state['temp_video_path'] is None or not os.path.exists(st.session_state['temp_video_path']):
+    file_sig = f"{uploaded_file.name}:{uploaded_file.size}"
+    if st.session_state.get('_last_file_sig') != file_sig:
+        cached_path = os.path.join(CACHE_DIR, "uploaded_source.mp4")
         with open(cached_path, "wb") as f:
             f.write(uploaded_file.getvalue())
         st.session_state['temp_video_path'] = cached_path
         st.session_state['words_timeline'] = None
+        st.session_state['rendering_complete'] = False
+        st.session_state['final_output_bytes'] = None
+        st.session_state['preview_audio_bytes'] = None
+        st.session_state['preview_ready'] = False
+        st.session_state['_last_file_sig'] = file_sig
 
     col1, col2 = st.columns([1, 1])
 
