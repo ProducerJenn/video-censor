@@ -1,0 +1,7 @@
+services:
+  censor:
+    build: .
+    container_name: video-censor
+    ports:
+      - "8501:8501"
+    restart: unless-stopped
