@@ -44,10 +44,12 @@ def generate_bleep_wave(duration, fps=44100, frequency=1000):
     stereo_wave = np.vstack((wave, wave)).T
     return stereo_wave
 
+WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "base")
+
 @st.cache_resource
 def load_whisper_model():
     """Cache the model in memory so it doesn't reload on every action."""
-    return WhisperModel("base", device="cpu", compute_type="int8")
+    return WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8")
 
 def analyze_speech(input_path, bad_words_list):
     """Runs Whisper to get word timestamps and returns the initial word breakdown."""
@@ -179,7 +181,7 @@ if '_last_file_sig' not in st.session_state:
 
 # Load Whisper model at startup (cached, downloads on first run)
 with st.sidebar:
-    with st.status("Loading Whisper model...") as s:
+    with st.status(f"Loading Whisper model ({WHISPER_MODEL})...") as s:
         load_whisper_model()
         s.update(label="Whisper model ready", state="complete")
 

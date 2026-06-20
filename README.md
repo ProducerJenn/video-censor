@@ -101,7 +101,8 @@ App3 also includes:
 
 ## Notes
 
-- First run downloads the Whisper **base** model (~150 MB, pre-downloaded during Docker build)
+- Whisper **base** model (~150 MB) is pre-downloaded during Docker build
+- Set `WHISPER_MODEL=medium` env var (or build arg) to use the larger, more accurate model (~1.5 GB)
 - Processing is CPU-bound; GPU acceleration is supported if you have CUDA set up
 - Bleeped audio is a 1 kHz sine wave
 
