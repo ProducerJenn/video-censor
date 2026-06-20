@@ -11,6 +11,11 @@ from moviepy.audio.AudioClip import AudioArrayClip
 CACHE_DIR = os.path.expanduser("~/.cache/censor-app")
 os.makedirs(CACHE_DIR, exist_ok=True)
 
+for f in os.listdir(CACHE_DIR):
+    p = os.path.join(CACHE_DIR, f)
+    if os.path.isfile(p):
+        os.remove(p)
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 BADWORDS_FILE = os.path.join(SCRIPT_DIR, "badwords.txt")
 
@@ -187,9 +192,14 @@ bleep_padding = st.sidebar.slider(
     help="Extra time to bleep before and after each flagged word"
 )
 
+MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024  # 2 GB
+
 uploaded_file = st.file_uploader("Choose an MP4 Video File", type=["mp4"])
 
 if uploaded_file is not None:
+    if uploaded_file.size > MAX_FILE_SIZE:
+        st.error(f"File too large ({uploaded_file.size / 1024**3:.1f} GB). Maximum is 2 GB.")
+        st.stop()
     file_sig = f"{uploaded_file.name}:{uploaded_file.size}"
     if st.session_state.get('_last_file_sig') != file_sig:
         cached_path = os.path.join(CACHE_DIR, "uploaded_source.mp4")
